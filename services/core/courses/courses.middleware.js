@@ -12,15 +12,19 @@ module.exports = (server) => {
 			sort = query.sort,
 			queryStr = query.query,
 			courses = server.db.getState().courses;
+			console.log(courses,from,to);
 		console.log(sort);
 		console.log(queryStr);
-		if (courses.length < to) {
-			to = courses.length;
+		if (!!from && !!to) {
+			if (courses.length < to) {
+				to = courses.length;
+			}
+			courses = courses.slice(from, to);
 		}
-		courses = courses.slice(from, to);
-		
+
+		console.log(courses);
 		res.json(courses);
 	});
-	
+
 	return router;
 };
