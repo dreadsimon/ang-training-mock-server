@@ -12,7 +12,6 @@ module.exports = (server) => {
 			sort = query.sort,
 			queryStr = query.query,
 			courses = server.db.getState().courses;
-			console.log(courses,from,to);
 		console.log(sort);
 		console.log(queryStr);
 		if (!!from && !!to) {
@@ -21,8 +20,6 @@ module.exports = (server) => {
 			}
 			courses = courses.slice(from, to);
 		}
-
-		console.log(courses);
 		res.json(courses);
 	});
 
