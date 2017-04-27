@@ -8,20 +8,19 @@ module.exports = (server) => {
 		let url_parts = url.parse(req.originalUrl, true),
 			query = url_parts.query,
 			page = query.page,
-			step = query.count,
+			step = parseInt(query.count) || 10,
 			sort = query.sort,
 			queryStr = query.q,
 			courses = server.db.getState().courses,
 			response = {
 				courses: courses,
-				pages: courses.length - 1,
 				step: 10,
+				pages: Math.ceil((courses.length) / step),
 				current: 0
 			},
 			from = 0,
 			to = 0;
 		if (!!page) {
-			step = parseInt(step) || 10;
 			if (response.pages < step) {
 				to = response.pages;
 			}
