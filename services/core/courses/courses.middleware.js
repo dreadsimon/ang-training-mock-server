@@ -7,20 +7,36 @@ module.exports = (server) => {
 	router.get('/courses', (req, res, next) => {
 		let url_parts = url.parse(req.originalUrl, true),
 			query = url_parts.query,
-			from = query.start,
-			to = +query.start + +query.count,
+			page = query.page,
+			step = query.count,
 			sort = query.sort,
-			queryStr = query.query,
-			courses = server.db.getState().courses;
-		console.log(sort);
-		console.log(queryStr);
-		if (!!from && !!to) {
-			if (courses.length < to) {
-				to = courses.length;
+			queryStr = query.q,
+			courses = server.db.getState().courses,
+			response = {
+				courses: courses,
+				pages: courses.length - 1,
+				step: 10,
+				current: 0
+			},
+			from = 0,
+			to = 0;
+		if (!!page) {
+			step = parseInt(step) || 10;
+			if (response.pages < step) {
+				to = response.pages;
 			}
-			courses = courses.slice(from, to);
+			from = page * step;
+			to = from + step;
+			console.log(from, to, step);
+			response.current = page;
+			response.courses = courses.slice(from, to);
 		}
-		res.json(courses);
+		if (!!queryStr && courses.length) {
+			response.courses = response.courses.filter((item) => {
+				return item.name.toLowerCase().search(queryStr.toLowerCase()) > -1;
+			});
+		}
+		res.json(response);
 	});
 
 	return router;
